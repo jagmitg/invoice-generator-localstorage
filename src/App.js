@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import InvoiceForm from "./pages/InvoiceForm";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import InvoiceView from "./pages/InvoiceView";
+import FillDataButton from "./components/FillDataButton";
 
 const App = () => {
     const [invoices, setInvoices] = useState([]);
@@ -38,6 +39,7 @@ const App = () => {
                                         </li>
                                     ))}
                                 </ul>
+                                <FillDataButton />
                             </>
                         }
                     />
