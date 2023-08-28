@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import InvoiceForm from "./pages/InvoiceForm";
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import InvoiceView from "./pages/InvoiceView";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const [invoices, setInvoices] = useState([]);
+
+    useEffect(() => {
+        const savedInvoices = localStorage.getItem("invoices");
+        if (savedInvoices) {
+            setInvoices(JSON.parse(savedInvoices));
+        }
+    }, []);
+
+    const saveInvoice = (invoice) => {
+        const newInvoices = [...invoices, invoice];
+        setInvoices(newInvoices);
+        localStorage.setItem("invoices", JSON.stringify(newInvoices));
+    };
+
+    return (
+        <Router>
+            <div>
+                <h1>Create Invoice</h1>
+                <Routes>
+                    <Route path="/invoice/:id" element={<InvoiceView invoices={invoices} />} />
+                    <Route
+                        path="/"
+                        element={
+                            <>
+                                <InvoiceForm onSave={saveInvoice} />
+                                <h2>Saved Invoices</h2>
+                                <ul>
+                                    {invoices.map((invoice, index) => (
+                                        <li key={index}>
+                                            <Link to={`/invoice/${index}`}>View Invoice {index + 1}</Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        }
+                    />
+                </Routes>
+            </div>
+        </Router>
+    );
+};
 
 export default App;
