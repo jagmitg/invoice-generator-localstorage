@@ -1,6 +1,12 @@
+// InvoiceList.tsx
 import React from "react";
+import { Invoice } from "../Interface"; // adjust the import path as necessary
 
-const InvoiceList = ({ invoices = [] }) => (
+interface InvoiceListProps {
+    invoices?: Invoice[]; // invoices is an optional prop of an array of Invoice objects
+}
+
+const InvoiceList: React.FC<InvoiceListProps> = ({ invoices = [] }) => (
     <div>
         <h2>Saved Invoices</h2>
         {invoices.map((invoice, index) => (

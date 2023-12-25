@@ -1,21 +1,22 @@
 import React from "react";
 
-const getRandomNumber = (min = 0, max = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
+const getRandomNumber = (min: number = 0, max: number = 100): number =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
-const getRandomDate = () => {
+const getRandomDate = (): string => {
     const today = new Date();
     const futureDate = new Date(today);
     futureDate.setDate(today.getDate() + getRandomNumber(1, 30));
     return futureDate.toISOString().slice(0, 10);
 };
 
-const FillDataButton = () => {
+const FillDataButton: React.FC = () => {
     const fetchDataAndSaveToLocalStorage = async () => {
         try {
             const response = await fetch("https://random-data-api.com/api/v2/users?size=10&is_xml=true");
             const data = await response.json();
 
-            const enrichedData = data.map((user) => ({
+            const enrichedData = data.map((user: any) => ({
                 billFrom: `${user.first_name} ${user.last_name}, ${user.address.street_address}, ${user.address.city}, ${user.address.state}, ${user.address.country}`,
                 billTo: `Random Co., Street ${getRandomNumber(1, 100)}, City ${getRandomNumber(1, 100)}`,
                 shipTo: `Ship Co., Avenue ${getRandomNumber(1, 100)}, City ${getRandomNumber(1, 100)}`,
@@ -41,7 +42,7 @@ const FillDataButton = () => {
                 total: 0 // Placeholder, this can be calculated based on the above
             }));
 
-            const existingInvoices = JSON.parse(localStorage.getItem("invoices")) || [];
+            const existingInvoices = JSON.parse(localStorage.getItem("invoices") || "[]");
             localStorage.setItem("invoices", JSON.stringify([...existingInvoices, ...enrichedData]));
 
             alert('Data saved to localStorage under key "invoices"');

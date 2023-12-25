@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import FormInput from "../components/FormInput";
 import FormTextArea from "../components/FormTextArea";
 import LineItemComponent from "../components/LineItem";
@@ -44,11 +44,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ onSave }) => {
         setInvoice({ ...invoice, lineItems: newLineItems });
     };
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement; // Correctly typecast the target
-        setInvoice((invoice) => ({ ...invoice, [name]: value }));
-    };
-
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSave(invoice);
@@ -73,13 +68,43 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ onSave }) => {
         <form onSubmit={handleSubmit}>
             <table>
                 <tbody>
-                    <FormTextArea label="Bill From" value={invoice.billFrom} onChange={handleChange} />
-                    <FormTextArea label="Bill To" value={invoice.billTo} onChange={handleChange} />
-                    <FormTextArea label="Ship To" value={invoice.shipTo} onChange={handleChange} />
-                    <FormInput label="Date" type="date" value={invoice.date} onChange={handleChange} />
-                    <FormInput label="Payment Terms" value={invoice.paymentTerms} onChange={handleChange} />
-                    <FormInput label="Due Date" type="date" value={invoice.dueDate} onChange={handleChange} />
-                    <FormInput label="PO Number" value={invoice.poNumber} onChange={handleChange} />
+                    <FormTextArea
+                        label="Bill From"
+                        value={invoice.billFrom}
+                        onChange={(e: any) => setInvoice({ ...invoice, billFrom: e.target.value })}
+                    />
+                    <FormTextArea
+                        label="Bill To"
+                        value={invoice.billTo}
+                        onChange={(e: any) => setInvoice({ ...invoice, billTo: e.target.value })}
+                    />
+                    <FormTextArea
+                        label="Ship To"
+                        value={invoice.shipTo}
+                        onChange={(e: any) => setInvoice({ ...invoice, shipTo: e.target.value })}
+                    />
+                    <FormInput
+                        label="Date"
+                        type="date"
+                        value={invoice.date}
+                        onChange={(e: any) => setInvoice({ ...invoice, date: e.target.value })}
+                    />
+                    <FormInput
+                        label="Payment Terms"
+                        value={invoice.paymentTerms}
+                        onChange={(e: any) => setInvoice({ ...invoice, paymentTerms: e.target.value })}
+                    />
+                    <FormInput
+                        label="Due Date"
+                        type="date"
+                        value={invoice.dueDate}
+                        onChange={(e: any) => setInvoice({ ...invoice, dueDate: e.target.value })}
+                    />
+                    <FormInput
+                        label="PO Number"
+                        value={invoice.poNumber}
+                        onChange={(e: any) => setInvoice({ ...invoice, poNumber: e.target.value })}
+                    />
                     {invoice.lineItems.map((item, index) => (
                         <LineItemComponent
                             key={index}
@@ -88,18 +113,27 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({ onSave }) => {
                             handleLineItemChange={handleLineItemChange}
                         />
                     ))}
-                    <FormInput label="Tax" type="number" value={invoice.tax} onChange={handleChange} />
+                    <FormInput
+                        label="Tax"
+                        type="number"
+                        value={invoice.tax.toString()}
+                        onChange={(e: any) => setInvoice({ ...invoice, tax: parseFloat(e.target.value) })}
+                    />
                     <FormInput
                         label="Shipping"
                         type="number"
-                        value={invoice.shipping}
-                        onChange={handleChange}
+                        value={invoice.shipping.toString()}
+                        onChange={(e: any) =>
+                            setInvoice({ ...invoice, shipping: parseFloat(e.target.value) })
+                        }
                     />
                     <FormInput
                         label="Discount"
                         type="number"
-                        value={invoice.discount}
-                        onChange={handleChange}
+                        value={invoice.discount.toString()}
+                        onChange={(e: any) =>
+                            setInvoice({ ...invoice, discount: parseFloat(e.target.value) })
+                        }
                     />
                     <tr>
                         <td>Total:</td>
