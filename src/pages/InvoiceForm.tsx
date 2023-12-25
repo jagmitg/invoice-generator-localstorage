@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import FormInput from "../components/FormInput";
 import FormTextArea from "../components/FormTextArea";
-import LineItem from "../components/LineItem";
+import LineItemComponent from "../components/LineItem";
+import { Invoice, LineItem } from "../Interface";
 
-const InvoiceForm = ({ onSave }) => {
-    const [invoice, setInvoice] = useState({
+interface InvoiceFormProps {
+    onSave: (invoice: Invoice) => void;
+}
+
+const InvoiceForm: React.FC<InvoiceFormProps> = ({ onSave }) => {
+    const [invoice, setInvoice] = useState<Invoice>({
         billFrom: "",
         billTo: "",
         shipTo: "",
@@ -32,15 +37,22 @@ const InvoiceForm = ({ onSave }) => {
         });
     };
 
-    const handleLineItemChange = (index, field, value) => {
+    const handleLineItemChange = (index: number, field: keyof LineItem, value: string | number) => {
         const newLineItems = [...invoice.lineItems];
-        newLineItems[index][field] = value;
+        const updatedItem = { ...newLineItems[index], [field]: value }; // Handle value type inside LineItem component
+        newLineItems[index] = updatedItem;
         setInvoice({ ...invoice, lineItems: newLineItems });
     };
 
-    const handleSubmit = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement; // Correctly typecast the target
+        setInvoice((invoice) => ({ ...invoice, [name]: value }));
+    };
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSave(invoice);
+        // Reset invoice after save
         setInvoice({
             billFrom: "",
             billTo: "",
@@ -61,68 +73,33 @@ const InvoiceForm = ({ onSave }) => {
         <form onSubmit={handleSubmit}>
             <table>
                 <tbody>
-                    <FormTextArea
-                        label="Bill From"
-                        value={invoice.billFrom}
-                        onChange={(e) => setInvoice({ ...invoice, billFrom: e.target.value })}
-                    />
-                    <FormTextArea
-                        label="Bill To"
-                        value={invoice.billTo}
-                        onChange={(e) => setInvoice({ ...invoice, billTo: e.target.value })}
-                    />
-                    <FormTextArea
-                        label="Ship To"
-                        value={invoice.shipTo}
-                        onChange={(e) => setInvoice({ ...invoice, shipTo: e.target.value })}
-                    />
-                    <FormInput
-                        label="Date"
-                        type="date"
-                        value={invoice.date}
-                        onChange={(e) => setInvoice({ ...invoice, date: e.target.value })}
-                    />
-                    <FormInput
-                        label="Payment Terms"
-                        value={invoice.paymentTerms}
-                        onChange={(e) => setInvoice({ ...invoice, paymentTerms: e.target.value })}
-                    />
-                    <FormInput
-                        label="Due Date"
-                        type="date"
-                        value={invoice.dueDate}
-                        onChange={(e) => setInvoice({ ...invoice, dueDate: e.target.value })}
-                    />
-                    <FormInput
-                        label="PO Number"
-                        value={invoice.poNumber}
-                        onChange={(e) => setInvoice({ ...invoice, poNumber: e.target.value })}
-                    />
+                    <FormTextArea label="Bill From" value={invoice.billFrom} onChange={handleChange} />
+                    <FormTextArea label="Bill To" value={invoice.billTo} onChange={handleChange} />
+                    <FormTextArea label="Ship To" value={invoice.shipTo} onChange={handleChange} />
+                    <FormInput label="Date" type="date" value={invoice.date} onChange={handleChange} />
+                    <FormInput label="Payment Terms" value={invoice.paymentTerms} onChange={handleChange} />
+                    <FormInput label="Due Date" type="date" value={invoice.dueDate} onChange={handleChange} />
+                    <FormInput label="PO Number" value={invoice.poNumber} onChange={handleChange} />
                     {invoice.lineItems.map((item, index) => (
-                        <LineItem
+                        <LineItemComponent
                             key={index}
                             item={item}
                             index={index}
                             handleLineItemChange={handleLineItemChange}
                         />
                     ))}
-                    <FormInput
-                        label="Tax"
-                        type="number"
-                        value={invoice.tax}
-                        onChange={(e) => setInvoice({ ...invoice, tax: parseFloat(e.target.value) })}
-                    />
+                    <FormInput label="Tax" type="number" value={invoice.tax} onChange={handleChange} />
                     <FormInput
                         label="Shipping"
                         type="number"
                         value={invoice.shipping}
-                        onChange={(e) => setInvoice({ ...invoice, shipping: parseFloat(e.target.value) })}
+                        onChange={handleChange}
                     />
                     <FormInput
                         label="Discount"
                         type="number"
                         value={invoice.discount}
-                        onChange={(e) => setInvoice({ ...invoice, discount: parseFloat(e.target.value) })}
+                        onChange={handleChange}
                     />
                     <tr>
                         <td>Total:</td>

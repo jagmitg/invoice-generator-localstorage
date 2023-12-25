@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import InvoiceForm from "./pages/InvoiceForm";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import InvoiceView from "./pages/InvoiceView";
 import FillDataButton from "./components/FillDataButton";
+import { Invoice } from "./Interface";
 
-const App = () => {
-    const [invoices, setInvoices] = useState([]);
+const App: FC = () => {
+    const [invoices, setInvoices] = useState<Invoice[]>([]);
 
     useEffect(() => {
         const savedInvoices = localStorage.getItem("invoices");
         if (savedInvoices) {
-            setInvoices(JSON.parse(savedInvoices));
+            setInvoices(JSON.parse(savedInvoices) as Invoice[]);
         }
     }, []);
 
-    const saveInvoice = (invoice) => {
+    const saveInvoice = (invoice: Invoice) => {
         const newInvoices = [...invoices, invoice];
         setInvoices(newInvoices);
         localStorage.setItem("invoices", JSON.stringify(newInvoices));
